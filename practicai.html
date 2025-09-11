@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>IA Falsa - Selecciona tu grado</title>
+    <style>
+        :root {
+            --bg: #0f1724;
+            --card: #0b1220;
+            --accent: #6ee7b7;
+            --muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            background: linear-gradient(180deg, #071129 0%, #081426 60%);
+            color: #e6eef8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 920px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border-radius: 14px;
+            padding: 26px;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .left {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+        }
+
+        h1 {
+            font-size: 20px;
+            margin: 0 0 6px 0
+        }
+
+        p.lead {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .grade-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px
+        }
+
+        .btn {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 10px 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+            transition: transform .12s ease, box-shadow .12s ease;
+            color: #e6eef8;
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .btn[data-selected="true"] {
+            box-shadow: 0 6px 18px rgba(102, 126, 234, 0.12);
+            border: 1px solid rgba(110, 231, 183, 0.18);
+            background: linear-gradient(180deg, rgba(110, 231, 183, 0.06), rgba(110, 231, 183, 0.02))
+        }
+
+        .ai-chat {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
+            padding: 18px;
+            border-radius: 12px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ai-message {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px
+        }
+
+        .result {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.01));
+            padding: 18px;
+            border-radius: 12px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .grade-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin: 0
+        }
+
+        .grade-desc {
+            color: var(--muted);
+            line-height: 1.5
+        }
+
+        .footer {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 8px
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .clear {
+            background: transparent;
+            border: 1px dashed rgba(255, 255, 255, 0.04);
+            padding: 8px 10px;
+            border-radius: 10px;
+            color: var(--muted);
+            cursor: pointer
+        }
+
+        .text-section {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .text-section label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .text-section textarea {
+            width: 100%;
+            height: 150px;
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 10px;
+            color: #e6eef8;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .text-section textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .analyze-btn {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 8px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            color: #e6eef8;
+        }
+
+        .analyze-btn:hover {
+            border-color: var(--accent);
+        }
+
+        @media (max-width:880px) {
+            .container {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container" role="main">
+        <section class="left">
+            <div>
+                <h1>IA falsa — ¿Qué grado eres?</h1>
+                <p class="lead">Pulsa un botón del grado (Primero a Noveno) y la "IA" te dará una breve descripción. Luego, podrás "subir" texto para que la IA lo "revise".</p>
+            </div>
+            <div class="ai-chat" aria-live="polite">
+                <div class="ai-message" id="aiPrompt">Hola 👋, dime tu grado escolar seleccionando uno de los botones.</div>
+                <div class="grade-grid" id="gradeGrid" role="list">
+                    <button class="btn" data-grade="1">Primero</button>
+                    <button class="btn" data-grade="2">Segundo</button>
+                    <button class="btn" data-grade="3">Tercero</button>
+                    <button class="btn" data-grade="4">Cuarto</button>
+                    <button class="btn" data-grade="5">Quinto</button>
+                    <button class="btn" data-grade="6">Sexto</button>
+                    <button class="btn" data-grade="7">Séptimo</button>
+                    <button class="btn" data-grade="8">Octavo</button>
+                    <button class="btn" data-grade="9">Noveno</button>
+                </div>
+                <div class="text-section" id="textSection">
+                    <label for="documentText">Pega tu texto aquí para que la IA lo "revise":</label>
+                    <textarea id="documentText" placeholder="Pega tu texto aquí..."></textarea>
+                    <button class="analyze-btn" id="analyzeBtn">Revisar Texto</button>
+                    <div class="ai-message" id="analyzeStatus" style="display:none; margin-top:5px; background:rgba(110,231,183,0.1); color:var(--accent)"></div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="clear" id="resetBtn">Limpiar selección</button>
+                <div class="footer">Demo creada por ti — editable.</div>
+            </div>
+        </section>
+        <aside class="result" aria-live="polite">
+            <div>
+                <p class="grade-title" id="resultTitle">Descripción del grado</p>
+                <p class="grade-desc" id="resultText">Selecciona un grado a la izquierda para ver su descripción aquí.</p>
+            </div>
+            <div style="margin-top:auto; font-size:13px; color:var(--muted)">Consejo: puedes modificar las descripciones en el código dentro del objeto <code>descriptions</code> y el resultado de la revisión en la función <code>analyzeDocument</code>.</div>
+        </aside>
+    </main>
+    <script>
+        const descriptions = {
+            1: {
+                title: 'Primero',
+                text: 'En primero se descubren las letras, los números y se trabaja la coordinación motora. Los niños aprenden a leer palabras simples, a contar con confianza y a jugar en equipo. Es un año de curiosidad y primeros logros escolares.'
+            },
+            2: {
+                title: 'Segundo',
+                text: 'Segundo refuerza la lectura y escritura: se leen párrafos sencillos y se escriben oraciones. Matemáticas introduce sumas y restas con más práctica. También se fomenta la responsabilidad en tareas pequeñas.'
+            },
+            3: {
+                title: 'Tercero',
+                text: 'En tercero los estudiantes empiezan a comprender operaciones básicas con más profundidad y a escribir textos cortos. Hay más actividades de ciencias y estudio del entorno, desarrollando pensamiento lógico y hábitos de estudio.'
+            },
+            4: {
+                title: 'Cuarto',
+                text: 'Cuarto intensifica proyectos grupales, la lectura comprensiva y la resolución de problemas. Se introducen temas de geografía, historia local y experimentos sencillos en ciencias. Las responsabilidades escolares crecen.'
+            },
+            5: {
+                title: 'Quinto',
+                text: 'Quinto prepara al estudiante para retos mayores: textos más largos, multiplicación y división, y trabajos por proyectos. Se fomenta la autonomía, la organización de tareas y el pensamiento crítico básico.'
+            },
+            6: {
+                title: 'Sexto',
+                text: 'Sexto marca el paso a educación media: materias separadas, lectura analítica y conceptos más abstractos en matemáticas y ciencias. Se enfatiza la investigación, presentaciones orales y el trabajo en equipo.'
+            },
+            7: {
+                title: 'Séptimo',
+                text: 'Séptimo desarrolla competencias más profundas: álgebra inicial, comprensión lectora avanzada, y ciencias con método científico. Comienzan a explorarse habilidades para la vida y proyectos a más largo plazo.'
+            },
+            8: {
+                title: 'Octavo',
+                text: 'Octavo profundiza en pensamiento crítico, resolución de problemas complejos y proyectos interdisciplinarios. Los estudiantes afinan técnicas de estudio y empiezan a pensar en opciones académicas futuras.'
+            },
+            9: {
+                title: 'Noveno',
+                text: 'Noveno es un año de consolidación: preparación para etapas superiores, materias más exigentes, y mayor responsabilidad en el aprendizaje autónomo. Se orienta al desarrollo de metas y decisiones escolares.'
+            }
+        };
+
+        const buttons = document.querySelectorAll('.btn');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+        const resetBtn = document.getElementById('resetBtn');
+        const aiPrompt = document.getElementById('aiPrompt');
+        const textSection = document.getElementById('textSection');
+        const documentText = document.getElementById('documentText');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const analyzeStatus = document.getElementById('analyzeStatus');
+
+        function selectGrade(n) {
+            // Marcar el botón
+            buttons.forEach(b => b.dataset.selected = (b.dataset.grade == n));
+            const g = descriptions[n];
+            if (!g) return;
+            // Animar respuesta de la "IA"
+            aiPrompt.textContent = `Procesando grado ${g.title}...`;
+            setTimeout(() => {
+                aiPrompt.textContent = `¡Listo! He seleccionado ${g.title}. Aquí tienes la descripción. Ahora, pega tu texto en el recuadro de abajo.`;
+            }, 350);
+
+            resultTitle.textContent = g.title;
+            resultText.textContent = g.text;
+            textSection.style.display = 'flex';
+        }
+
+        function analyzeDocument() {
+            const textContent = documentText.value.trim();
+            if (textContent.length === 0) {
+                analyzeStatus.style.display = 'block';
+                analyzeStatus.textContent = 'El texto no puede estar vacío.';
+                return;
+            }
+
+            // Contar palabras (dividir por espacios y filtrar elementos vacíos)
+            const words = textContent.split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+
+            // Calcular nota (1 punto por cada 100 palabras)
+            const score = Math.min(Math.floor(wordCount / 100), 10);
+
+            analyzeStatus.style.display = 'block';
+            analyzeStatus.textContent = 'Analizando tu texto...';
+
+            setTimeout(() => {
+                let statusMessage = `✅ Texto analizado.`;
+                let resultMessage = `<p class="grade-title">Resultados de la revisión</p>`;
+                
+                resultMessage += `<p class="grade-desc">Tu texto tiene **${wordCount}** palabras. Eso te da una nota de **${score}/10**.</p>`;
+                if (score >= 10) {
+                    resultMessage += `<p class="grade-desc">¡Excelente trabajo! Has superado el requisito de palabras. Sigue así.</p>`;
+                } else if (score >= 5) {
+                    resultMessage += `<p class="grade-desc">Es un buen esfuerzo. Intenta escribir un poco más para alcanzar una nota más alta.</p>`;
+                } else {
+                    resultMessage += `<p class="grade-desc">El texto es muy corto. Recuerda que la extensión del trabajo es un factor importante.</p>`;
+                }
+                
+                analyzeStatus.textContent = statusMessage;
+                resultTitle.innerHTML = '';
+                resultText.innerHTML = resultMessage;
+            }, 1500);
+        }
+
+        buttons.forEach(btn => btn.addEventListener('click', () => selectGrade(btn.dataset.grade)));
+        analyzeBtn.addEventListener('click', analyzeDocument);
+
+        resetBtn.addEventListener('click', () => {
+            buttons.forEach(b => b.dataset.selected = 'false');
+            resultTitle.textContent = 'Descripción del grado';
+            resultText.textContent = 'Selecciona un grado a la izquierda para ver su descripción aquí.';
+            aiPrompt.textContent = 'Hola 👋, dime tu grado escolar seleccionando uno de los botones.';
+            textSection.style.display = 'none';
+            analyzeStatus.style.display = 'none';
+            documentText.value = '';
+        });
+    </script>
+</body>
+</html>
